@@ -3,8 +3,8 @@
 //      are changed infrequently
 //
 
-#if !defined(AFX_STDAFX_H__73E91345_425C_497E_8E9D_44339D83723D__INCLUDED_)
-#define AFX_STDAFX_H__73E91345_425C_497E_8E9D_44339D83723D__INCLUDED_
+#if !defined(AFX_STDAFX_H__337FC90C_8E06_4724_B4F9_4B7FC948D7F0__INCLUDED_)
+#define AFX_STDAFX_H__337FC90C_8E06_4724_B4F9_4B7FC948D7F0__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -19,9 +19,12 @@
 #ifndef _AFX_NO_AFXCMN_SUPPORT
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
-#include "SkinPPWTL.h" 
+
+#include <afxsock.h>		// MFC socket extensions
+
+#include "SkinMagicLib.h"
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif // !defined(AFX_STDAFX_H__73E91345_425C_497E_8E9D_44339D83723D__INCLUDED_)
+#endif // !defined(AFX_STDAFX_H__337FC90C_8E06_4724_B4F9_4B7FC948D7F0__INCLUDED_)

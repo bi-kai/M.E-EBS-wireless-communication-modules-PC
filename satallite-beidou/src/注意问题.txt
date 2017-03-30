@@ -1,0 +1,60 @@
+拨号后，m_NumberShow和m_strPhoneNumber要重置，再接受
+COM连接后，必须提示连接成不成功
+拨号通话开始，m_strRXData要重置为空
+
+
+
+卫星电话号码到底是个什么情况，是不是跟一般的手机号码一样   ------------（已解决）
+
+拨号后要加上，*和#的Enable（已解决）
+
+串口关闭后，很多值应该复位；应该思考哪些值要复位
+
+是不是要ring几次后，才可以摘机  （比如3次，已做）
+
+
+
+ATD222222;
+
++RINFO:2 ,CHINA
+
++CINFO:xxxxxxxx
+
+OK
+
+ATH
+
+NO CARRIER:
+1、通话中，对方挂断
+2、信号中断
+
+拨通电话之后：
++RINFO:2 ,CHINA
+
++CINFO:xxxxxxxx
+
+对方未接、忙：
+NO ANSWER
+
+BUSY
+
+NO CARRIER
+
+
+拨通之前，信号不好
+
+
++CME ERROR：xxxx
+
++CLIP:xxxxxxx
+
+RING
+
+RING
+
+
+
+
+若是在通话中，对方发送数字（0~9，*#），这时候的接受没有做，这关系到自动应答那一块
+
+通话中，具体发什么信号，还得查查

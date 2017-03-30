@@ -1,0 +1,31 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: Satellite - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\scl\AppData\Local\Temp\RSP5D91.tmp" with contents
+[
+SkinMagic.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/Satellite.pdb" /debug /machine:I386 /out:"Debug/Satellite.exe" /pdbtype:sept 
+".\Debug\Satellite.obj"
+".\Debug\SatelliteDlg.obj"
+".\Debug\SerialPort.obj"
+".\Debug\StdAfx.obj"
+".\Debug\Satellite.res"
+]
+Creating command line "link.exe @C:\Users\scl\AppData\Local\Temp\RSP5D91.tmp"
+<h3>Output Window</h3>
+Linking...
+Creating command line "bscmake.exe /nologo /o"Debug/Satellite.bsc"  ".\Debug\StdAfx.sbr" ".\Debug\Satellite.sbr" ".\Debug\SatelliteDlg.sbr" ".\Debug\SerialPort.sbr""
+Creating browse info file...
+<h3>Output Window</h3>
+
+
+
+<h3>Results</h3>
+Satellite.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
