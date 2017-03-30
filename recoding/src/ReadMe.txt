@@ -1,46 +1,46 @@
 ========================================================================
-       MICROSOFT FOUNDATION CLASS LIBRARY : Â¼Òô
+       MICROSOFT FOUNDATION CLASS LIBRARY : record
 ========================================================================
 
 
-AppWizard has created this Â¼Òô application for you.  This application
+AppWizard has created this record application for you.  This application
 not only demonstrates the basics of using the Microsoft Foundation classes
 but is also a starting point for writing your application.
 
 This file contains a summary of what you will find in each of the files that
-make up your Â¼Òô application.
+make up your record application.
 
-Â¼Òô.dsp
+record.dsp
     This file (the project file) contains information at the project level and
     is used to build a single project or subproject. Other users can share the
     project (.dsp) file, but they should export the makefiles locally.
 
-Â¼Òô.h
+record.h
     This is the main header file for the application.  It includes other
     project specific headers (including Resource.h) and declares the
-    CMyApp application class.
+    CRecordApp application class.
 
-Â¼Òô.cpp
+record.cpp
     This is the main application source file that contains the application
-    class CMyApp.
+    class CRecordApp.
 
-Â¼Òô.rc
+record.rc
     This is a listing of all of the Microsoft Windows resources that the
     program uses.  It includes the icons, bitmaps, and cursors that are stored
     in the RES subdirectory.  This file can be directly edited in Microsoft
 	Visual C++.
 
-Â¼Òô.clw
+record.clw
     This file contains information used by ClassWizard to edit existing
     classes or add new classes.  ClassWizard also uses this file to store
     information needed to create and edit message maps and dialog data
     maps and to create prototype member functions.
 
-res\Â¼Òô.ico
+res\record.ico
     This is an icon file, which is used as the application's icon.  This
-    icon is included by the main resource file Â¼Òô.rc.
+    icon is included by the main resource file record.rc.
 
-res\Â¼Òô.rc2
+res\record.rc2
     This file contains resources that are not edited by Microsoft 
 	Visual C++.  You should place all resources not editable by
 	the resource editor in this file.
@@ -52,10 +52,10 @@ res\Â¼Òô.rc2
 
 AppWizard creates one dialog class:
 
-Â¼ÒôDlg.h, Â¼ÒôDlg.cpp - the dialog
-    These files contain your CMyDlg class.  This class defines
+recordDlg.h, recordDlg.cpp - the dialog
+    These files contain your CRecordDlg class.  This class defines
     the behavior of your application's main dialog.  The dialog's
-    template is in Â¼Òô.rc, which can be edited in Microsoft
+    template is in record.rc, which can be edited in Microsoft
 	Visual C++.
 
 
@@ -64,7 +64,7 @@ Other standard files:
 
 StdAfx.h, StdAfx.cpp
     These files are used to build a precompiled header (PCH) file
-    named Â¼Òô.pch and a precompiled types file named StdAfx.obj.
+    named record.pch and a precompiled types file named StdAfx.obj.
 
 Resource.h
     This is the standard header file, which defines new resource IDs.

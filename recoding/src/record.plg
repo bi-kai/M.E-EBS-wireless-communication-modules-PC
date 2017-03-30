@@ -1,0 +1,33 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: record - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x804 /fo"Debug/record.res" /d "_DEBUG" /d "_AFXDLL" "C:\Users\Administrator\Desktop\电台项目\record11\record.rc"" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP367.tmp" with contents
+[
+SkinPPWTL.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/record.pdb" /debug /machine:I386 /out:"Debug/record.exe" /pdbtype:sept 
+".\Debug\CWaveFile.obj"
+".\Debug\record.obj"
+".\Debug\recordDlg.obj"
+".\Debug\StdAfx.obj"
+".\Debug\record.res"
+]
+Creating command line "link.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP367.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Linking...
+Creating command line "bscmake.exe /nologo /o"Debug/record.bsc"  ".\Debug\StdAfx.sbr" ".\Debug\CWaveFile.sbr" ".\Debug\record.sbr" ".\Debug\recordDlg.sbr""
+Creating browse info file...
+<h3>Output Window</h3>
+
+
+
+<h3>Results</h3>
+record.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
