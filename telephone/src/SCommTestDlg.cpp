@@ -98,8 +98,8 @@ BEGIN_MESSAGE_MAP(CSCommTestDlg, CDialog)
 	ON_BN_CLICKED(IDC_BTN_ATB, OnBtnAtb)
 	ON_BN_CLICKED(IDC_BTN_GETPORT, OnBtnGetport)
 	ON_CBN_SELCHANGE(IDC_COM_PORT, OnSelchangeComPort)
-	ON_BN_CLICKED(IDC_RADIO_NOPEO, OnRadioNopeo)
-	ON_BN_CLICKED(IDC_RADIO_PEO, OnRadioPeo)
+//	ON_BN_CLICKED(IDC_RADIO_NOPEO, OnRadioNopeo)
+//	ON_BN_CLICKED(IDC_RADIO_PEO, OnRadioPeo)
 	ON_WM_TIMER()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -135,7 +135,7 @@ BOOL CSCommTestDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 	
 	
-	DWORD style=WS_VISIBLE|WS_CHILD;	//控件可见,子窗口
+//	DWORD style=WS_VISIBLE|WS_CHILD;	//控件可见,子窗口
 	if(WT_ctrlComm.GetPortOpen())
 		WT_ctrlComm.SetPortOpen(FALSE);
 	OnBtnGetport();
@@ -146,7 +146,7 @@ BOOL CSCommTestDlg::OnInitDialog()
 		SetDlgItemText(IDC_BTN_OPEN,"关闭串口");//如串口已经打开则按钮显示"关闭串口"字体
 	else
 		SetDlgItemText(IDC_BTN_OPEN,"打开串口");	
-	((CButton*)GetDlgItem(IDC_RADIO_NOPEO))->SetCheck(TRUE);	//初始时设置无人值守生效
+//	((CButton*)GetDlgItem(IDC_RADIO_NOPEO))->SetCheck(TRUE);	//初始时设置无人值守生效
 
 	SetTimer(NULL,1000,NULL);	//设置时间
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -282,13 +282,13 @@ void CSCommTestDlg::DoATCIDAndNum(char *charpoint,char *str_callon)
 		WT_str_show += charpoint;
 		WT_Time = CTime::GetCurrentTime();	//获取当前时间
 		str_time = WT_Time.Format("%H%M%S");	//字符(除'\0')长度为6
-		if(WT_sel_NoPeo)	//无人值守RecordTelTime的格式
+		if(1)	//无人接听时
 		{
 			RecordTelTime = WT_str_show + " " + str_time + "NoPeople";
 			MessageBox(RecordTelTime);
 			sendATZ();
 		}
-		else
+		else//人工接听时
 		{
 			RecordTelTime = WT_str_show + " " + str_time + "People";
 		}
@@ -506,27 +506,27 @@ void CSCommTestDlg::OnSelchangeComPort()
 	WT_ctrlComm.SetCommPort(ports.ElementAt(curport));
 }
 //Radio button按钮无人值守
-void CSCommTestDlg::OnRadioNopeo() 
-{
-	GetDlgItem(IDC_EDIT_TXDATA)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_BTN_ATZ)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_BTN_ATH)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_BTN_ATD)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_BTN_ATB)->ShowWindow(SW_HIDE);
-	WT_sel_NoPeo = true;	//选中无人值守的radio button;
-	WT_sel_Peo = false;
-}
+// void CSCommTestDlg::OnRadioNopeo() 
+// {
+// 	GetDlgItem(IDC_EDIT_TXDATA)->ShowWindow(SW_HIDE);
+// 	GetDlgItem(IDC_BTN_ATZ)->ShowWindow(SW_HIDE);
+// 	GetDlgItem(IDC_BTN_ATH)->ShowWindow(SW_HIDE);
+// 	GetDlgItem(IDC_BTN_ATD)->ShowWindow(SW_HIDE);
+// 	GetDlgItem(IDC_BTN_ATB)->ShowWindow(SW_HIDE);
+// //	WT_sel_NoPeo = true;	//选中无人值守的radio button;
+// //	WT_sel_Peo = false;
+// }
 //Radio button按钮人工值守
-void CSCommTestDlg::OnRadioPeo() 
-{
-	GetDlgItem(IDC_EDIT_TXDATA)->ShowWindow(SW_SHOW);
-	GetDlgItem(IDC_BTN_ATZ)->ShowWindow(SW_SHOW);
-	GetDlgItem(IDC_BTN_ATH)->ShowWindow(SW_SHOW);
-	GetDlgItem(IDC_BTN_ATD)->ShowWindow(SW_SHOW);
-	GetDlgItem(IDC_BTN_ATB)->ShowWindow(SW_SHOW);
-	WT_sel_Peo = true;	//选中人工值守的radio button
-	WT_sel_NoPeo = false;
-}
+// void CSCommTestDlg::OnRadioPeo() 
+// {
+// 	GetDlgItem(IDC_EDIT_TXDATA)->ShowWindow(SW_SHOW);
+// 	GetDlgItem(IDC_BTN_ATZ)->ShowWindow(SW_SHOW);
+// 	GetDlgItem(IDC_BTN_ATH)->ShowWindow(SW_SHOW);
+// 	GetDlgItem(IDC_BTN_ATD)->ShowWindow(SW_SHOW);
+// 	GetDlgItem(IDC_BTN_ATB)->ShowWindow(SW_SHOW);
+// //	WT_sel_Peo = true;	//选中人工值守的radio button
+// //	WT_sel_NoPeo = false;
+// }
 //外部接口函数
 void GetTelTime()
 {

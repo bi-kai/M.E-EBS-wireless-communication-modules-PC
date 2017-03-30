@@ -25,8 +25,8 @@
 #define IDC_BTN_ATS                     1012
 #define IDC_COM_PORT                    1014
 #define IDC_BTN_GETPORT                 1025
-#define IDC_RADIO_PEO                   1026
-#define IDC_RADIO_NOPEO                 1027
+//#define IDC_RADIO_PEO                   1026
+//#define IDC_RADIO_NOPEO                 1027
 #define IDC_STATIC_TIME                 1028
 
 // Next default values for new objects

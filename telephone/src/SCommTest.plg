@@ -6,7 +6,8 @@
 --------------------Configuration: SCommTest - Win32 Debug--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\Users\whc\AppData\Local\Temp\RSP8E4D.tmp" with contents
+Creating command line "rc.exe /l 0x804 /fo"Debug/SCommTest.res" /d "_DEBUG" "D:\vc\workspace\通信软件\有线电话\2013.9.26SCommTest\SCommTest.rc"" 
+Creating temporary file "C:\Users\idol\AppData\Local\Temp\RSPBA73.tmp" with contents
 [
 winmm.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/SCommTest.pdb" /debug /machine:I386 /out:"Debug/SCommTest.exe" /pdbtype:sept 
 ".\Debug\mscomm.obj"
@@ -15,8 +16,9 @@ winmm.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/SCommTest.pdb"
 ".\Debug\StdAfx.obj"
 ".\Debug\SCommTest.res"
 ]
-Creating command line "link.exe @C:\Users\whc\AppData\Local\Temp\RSP8E4D.tmp"
+Creating command line "link.exe @C:\Users\idol\AppData\Local\Temp\RSPBA73.tmp"
 <h3>Output Window</h3>
+Compiling resources...
 Linking...
 Creating command line "bscmake.exe /nologo /o"Debug/SCommTest.bsc"  ".\Debug\StdAfx.sbr" ".\Debug\mscomm.sbr" ".\Debug\SCommTest.sbr" ".\Debug\SCommTestDlg.sbr""
 Creating browse info file...

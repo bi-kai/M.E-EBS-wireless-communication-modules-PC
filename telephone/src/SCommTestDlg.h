@@ -39,8 +39,8 @@ public:
 // Implementation
 protected:
 	HICON m_hIcon;
-	BOOL WT_sel_NoPeo;	//radio button的bool型变量
-	BOOL WT_sel_Peo;
+//	BOOL WT_sel_NoPeo;	//radio button的bool型变量
+//	BOOL WT_sel_Peo;
 	CTime WT_Time;		//CTime变量,获取当前时间
 	CString WT_str_show;
 	// Generated message map functions
