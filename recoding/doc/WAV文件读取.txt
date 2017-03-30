@@ -1,0 +1,314 @@
+vc中读取wav文件的时长和文件播放的几种方式
+读取wav文件的时长：
+int GetTimeLength() 
+//获取声音文件数据的函数，pString参数指向要打开的声音文件； 
+{ 
+HMMIO file;//定义HMMIO文件句柄； 
+file=mmioOpen(".//TTS.wav",NULL,MMIO_READWRITE);//以读写模式打开所给的WAVE文件； 
+if(file==NULL) 
+{ 
+TRACE("WAVE文件打开失败！"); 
+return -1; 
+}
+char style[4];//定义一个四字节的数据，用来存放文件的类型； 
+mmioSeek(file,8,SEEK_SET);//定位到WAVE文件的类型位置 
+mmioRead(file,style,4); 
+if(style[0]!='W'||style[1]!='A'||style[2]!='V'||style[3]!='E')//判断该文件是否为"WAVE"文件格式 
+{ 
+TRACE("该文件不是WAVE格式的文件！"); 
+return -1; 
+}
+PCMWAVEFORMAT format; //定义PCMWAVEFORMAT结构对象，用来判断WAVE文件格式； 
+mmioSeek(file,20,SEEK_SET); 
+//对打开的文件进行定位，此时指向WAVE文件的PCMWAVEFORMAT结构的数据； 
+mmioRead(file,(char*)&format,sizeof(PCMWAVEFORMAT));//获取该结构的数据；
+//获取WAVE文件的声音数据的大小； 
+mmioSeek(file,42,SEEK_SET); 
+unsigned long size; 
+mmioRead(file,(char*)&size,4);
+//计算文件时长 
+int timeLength; 
+timeLength = size/format.wf.nAvgBytesPerSec;
+::mmioClose(file, 0);
+return timeLength; 
+}
+一、前言
+
+　　当前Visual C++相关的编程资料中，无论是大部头的参考书，还是一些计算机杂志，对声音文件的处理都是泛泛的涉及一下，许多编程爱好者都感到对该部分的内容了解不是很透彻，本文希望能够给刚刚涉及到声音处理领域的朋友们起到一个引路的作用，帮助他们尽快进入声音处理的更深奥空间。
+
+　　当前计算机系统处理声音文件有两种办法：一是使用现成的软件，如微软的录音机、SoundForge、CoolEdit等软件可以实现对声音信号进行录音、编辑、播放的处理，但它们的功能是有限的，为了更灵活，更大限度地处理声音数据，就不得不使用另外一种方法，既利用微软提供的多媒体服务，在Windows环境下自己编写程序来进行声音处理来实现一些特定的功能。下面就开始介绍声音文件的格式和在Windows环境下使用Visual C++开发工具进行声音文件编程处理的方法，本文所有的程序代码都在Windows2000、Visual C++6.0环境下编译通过，运行正常。
+
+　　二、RIFF文件结构和WAVE文件格式
+
+　　Windows支持两种RIFF(Resource Interchange File Format,"资源交互文件格式")格式的音频文件：MIDI的RMID文件和波形音频文件格式WAVE文件，其中在计算机领域最常用的数字化声音文件格式是后者，它是微软专门为Windows系统定义的波形文件格式（Waveform Audio），由于其扩展名为"*.wav"，因而该类文件也被称为WAVE文件。为了突出重点，有的放矢，本文涉及到的声音文件所指的就是WAVE文件。常见的WAVE语音文件主要有两种，分别对应于单声道（11.025KHz采样率、8Bit的采样值）和双声道（44.1KHz采样率、16Bit的采样值）。这里的采样率是指声音信号在进行"模→数"转换过程中单位时间内采样的次数。采样值是指每一次采样周期内声音模拟信号的积分值。对于单声道声音文件，采样数据为八位的短整数（short int 00H-FFH）；而对于双声道立体声声音文件，每次采样数据为一个16位的整数（int），高八位和低八位分别代表左右两个声道。WAVE文件数据块包含以脉冲编码调制（PCM）格式表示的样本。在进行声音编程处理以前，首先让我们来了解一下RIFF文件和WAVE文件格式。
+
+　　RIFF文件结构可以看作是树状结构，其基本构成是称为"块"（Chunk）的单元，每个块有"标志符"、"数据大小"及"数据"所组成，块的结构如图1所示：
+
+块的标志符（4BYTES）
+数据大小 （4BYTES）
+数据 　图一、 块的结构示意图
+
+　　从上图可以看出，其中"标志符"为4个字符所组成的代码，如"RIFF"，"LIST"等，指定块的标志ID；数据大小用来指定块的数据域大小，它的尺寸也为4个字符；数据用来描述具体的声音信号，它可以由若干个子块构成，一般情况下块与块是平行的，不能相互嵌套，但是有两种类型的块可以嵌套子块，他们是"RIFF"或"LIST"标志的块，其中RIFF块的级别最高，它可以包括LIST块。另外，RIFF块和LIST块与其他块不同，RIFF块的数据总是以一个指定文件中数据存储格式的四个字符码（称为格式类型）开始，如WAVE文件有一个"WAVE"的格式类型。LIST块的数据总是以一个指定列表内容的4个字符码（称为列表类型）开始，例如扩展名为".AVI"的视频文件就有一个"strl"的列表类型。RIFF和LIST的块结构如下：
+
+RIFF/LIST标志符
+数据1大小
+数据1	 格式/列表类型
+数据 图二、RIFF/LIST块结构
+
+　　WAVE文件是非常简单的一种RIFF文件，它的格式类型为"WAVE"。RIFF块包含两个子块，这两个子块的ID分别是"fmt"和"data",其中"fmt"子块由结构PCMWAVEFORMAT所组成，其子块的大小就是sizeofof(PCMWAVEFORMAT),数据组成就是PCMWAVEFORMAT结构中的数据。WAVE文件的结构如下图三所示：
+
+标志符（RIFF）
+数据大小
+格式类型（"WAVE"）
+"fmt"
+Sizeof(PCMWAVEFORMAT)
+PCMWAVEFORMAT
+"data"
+声音数据大小
+声音数据 　图三、WAVE文件结构
+
+　　PCMWAVEFORMAT结构定义如下：
+
+Typedef struct
+{
+WAVEFORMAT wf;//波形格式；
+WORD wBitsPerSample;//WAVE文件的采样大小；
+}PCMWAVEFORMAT；
+WAVEFORMAT结构定义如下：
+typedef struct
+{
+WORD wFormatag;//编码格式，包括WAVE_FORMAT_PCM，WAVEFORMAT_ADPCM等
+WORD nChannls;//声道数，单声道为1，双声道为2;
+DWORD nSamplesPerSec;//采样频率；
+DWORD nAvgBytesperSec；//每秒的数据量；
+WORD nBlockAlign;//块对齐；
+}WAVEFORMAT；
+　　"data"子块包含WAVE文件的数字化波形声音数据，其存放格式依赖于"fmt"子块中wFormatTag成员指定的格式种类，在多声道WAVE文件中，样本是交替出现的。如16bit的单声道WAVE文件和双声道WAVE文件的数据采样格式分别如图四所示：
+
+　　16位单声道：
+
+采样一	 采样二	 ……
+低字节	 高字节	 低字节	 高字节	 ……
+　　16位双声道：
+
+采样一 ……
+左声道	 右声道	 ……
+低字节	 高字节	 低字节	 高字节	 ……
+　　　　　　　　　　　　　　　　　图四、WAVE文件数据采样格式
+三、声音文件的声音数据的读取操作
+
+　　操作声音文件，也就是将WAVE文件打开，获取其中的声音数据，根据所需要的声音数据处理算法，进行相应的数学运算，然后将结果重新存储与WAVE格式的文件中去。可以使用CFILE类来实现读取操作，也可以使用另外一种方法，拿就是使用Windows提供的多媒体处理函数（这些函数都以mmino打头）。这里就介绍如何使用这些相关的函数来获取声音文件的数据，至于如何进行处理，那要根据你的目的来选择不同的算法了。WAVE文件的操作流程如下：
+
+　　1．调用mminoOpen函数来打开WAVE文件，获取HMMIO类型的文件句柄；
+
+　　2．根据WAVE文件的结构，调用mmioRead、mmioWrite和mmioSeek函数实现文件的读、写和定位操作；
+
+　　3．调用mmioClose函数来关闭WAVE文件。
+
+　　下面的函数代码就是根据WAVE文件的格式，实现了读取双声道立体声数据，但是在使用下面的代码过程中，注意需要在程序中链接Winmm.lib库，并且包含头文件"Mmsystem.h"。
+
+BYTE * GetData(Cstring *pString) 
+//获取声音文件数据的函数，pString参数指向要打开的声音文件；
+{
+if (pString==NULL)
+return NULL;
+HMMIO file1;//定义HMMIO文件句柄；
+file1=mmioOpen((LPSTR)pString,NULL,MMIO_READWRITE);//以读写模式打开所给的WAVE文件；
+if(file1==NULL)
+{
+MessageBox("WAVE文件打开失败！");
+Return NULL;
+}
+char style[4];//定义一个四字节的数据，用来存放文件的类型；
+mmioSeek(file1,8,SEEK_SET);//定位到WAVE文件的类型位置
+mmioRead(file1,style,4);
+if(style[0]!='W'||style[1]!='A'||style[2]!='V'||style[3]!='E')//判断该文件是否为"WAVE"文件格式
+{
+MessageBox("该文件不是WAVE格式的文件！");
+Return NULL;
+}
+PCMWAVEFORMAT format; //定义PCMWAVEFORMAT结构对象，用来判断WAVE文件格式；
+mmioSeek(file1,20,SEEK_SET);
+//对打开的文件进行定位，此时指向WAVE文件的PCMWAVEFORMAT结构的数据；
+mmioRead(file1,(char*)&format,sizeof(PCMWAVEFORMAT));//获取该结构的数据；
+if(format.wf.nChannels!=2)//判断是否是立体声声音；
+{
+MessageBox("该声音文件不是双通道立体声文件");
+return NULL;
+}
+mmioSeek(file1,24+sizeof(PCMWAVEFORMAT),SEEK_SET);
+//获取WAVE文件的声音数据的大小；
+long size;
+mmioRead(file1,(char*)&size,4);
+BYTE *pData;
+pData=(BYTE*)new char[size];//根据数据的大小申请缓冲区；
+mmioSeek(file1,28+sizeof(PCMWAVEFORMAT),SEEK_SET);//对文件重新定位；
+mmioRead(file1,(char*)pData,size);//读取声音数据；
+mmioClose(file1, MMIO_FHOPEN);//关闭WAVE文件；
+return pData;
+}
+　　四、使用MCI方法操作声音文件
+
+　　WAVE声音文件一个最基本的操作就是将文件中的声音数据播放出来，用Windows提供的API函数BOOL sndPlaySound(LPCSTR lpszSound, UINT fuSound)可以实现小型WAV文件的播放，其中参数lpszSound 为所要播放的声音文件，fuSound为播放声音文件时所用的标志位。例如实现Sound.wav 文件的异步播放，只要调用函数sndPlaySound("c:\windows\Sound.wav",SND_ASYNC)就可以了，由此可以看到sndPlaySound函数使用是很简单的。但是当WAVE文件大于100K时，这时候系统无法将声音数据一次性的读入内存，sndPlaySound函数就不能进行播放了。为了解决这个问题，你的一个选择就是用MCI方法来操作声音文件了。在使用MCI方法之前，首先需要在你开发的项目设置Project->Setting->Link->Object/library modules中加入winmm.lib。并在头文件中包括"mmsystem.h"头文件。
+
+　　MicroSoft API提供了MCI（The Media Control Interface）的方法mciSendCommand（）和mciSendString（）来完成WAVE文件的播放，这里仅介绍mciSendCommand（）函数的使用。
+
+　　原型：DWORD mciSendCommand（UINT wDeviceID，UINT wMessage，DWORD dwParam1，DWORD dwParam2）；
+
+　　参数：wDeviceID：接受消息的设备ID；
+
+　　　　　Message：MCI命令消息；
+
+　　　　　wParam1：命令的标志位；
+
+　　　　　wParam2：所使用参数块的指针
+
+　　返值：调用成功，返回零；否则，返回双字中的低字存放有错误信息。
+
+　　在使用MCI播放声音文件时，首先要打开音频设备，为此要定义MCI_OPEN_PARMS变量 OpenParms，并设置该结构的相应分量：
+
+OpenParms.lpstrDeviceType = (LPCSTR) MCI_DEVTYPE_WAVEFORM_AUDIO;//WAVE类型
+OpenParms.lpstrElementName = (LPCSTR) Filename;//打开的声音文件名；
+OpenParms.wDeviceID = 0;//打开的音频设备的ID
+　　mciSendCommand (NULL, MCI_OPEN,MCI_WAIT | MCI_OPEN_TYPE | MCI_OPEN_TYPE_ID | MCI_OPEN_ELEMENT, (DWORD)(LPVOID) &OpenParms)函数调用发送MCI_OPEN命令后，返回的参数 OpenParms中成员变量的wDeviceID指明打开了哪个设备。需要关闭音频设备时只要调用mciSendCommand (m_wDeviceID, MCI_CLOSE, NULL, NULL)就可以了。
+
+　　播放WAVE文件时，需要定义MCI_PLAY_PARMS变量PlayParms，对该变量进行如下设置：PlayParms.dwFrom = 0，这是为了指定从什么地方（时间）播放WAVE文件，设置好以后，调用函数mciSendCommand (m_wDeviceID, MCI_PLAY,MCI_FROM, (DWORD)(LPVOID)&PlayParms))；就实现了WAVE声音文件的播放。
+
+　　另外，调用mciSendCommand (m_wDeviceID, MCI_PAUSE, 0,(DWORD)(LPVOID)&PlayParms)实现了暂停功能。调用mciSendCommand (m_wDeviceID, MCI_STOP, NULL, NULL)实现停止功能等，可以看出，这些不同的功能实现都是依靠参数"Message"取不同的值来实现的。不同的Message和dwParam1、dwParam2的组合还可以实现文件的跳跃功能。如下面的代码实现了跳转到WAVE文件末端的操作：mciSendCommand (m_wDeviceID, MCI_SEEK, MCI_SEEK_TO_END, NULL)。
+
+　　下面的代码实现了WAVE声音文件的播放：
+
+void CTest1View::OnMciPlayWave() 
+{
+// TODO: Add your command handler code here
+MCI_OPEN_PARMS mciOpenParms;
+MCI_PLAY_PARMS PlayParms;
+mciOpenParms.dwCallback=0;
+mciOpenParms.lpstrElementName="d:\\chimes.wav";
+mciOpenParms.wDeviceID=0;
+mciOpenParms.lpstrDeviceType="waveaudio";
+mciOpenParms.lpstrAlias=" ";
+PlayParms.dwCallback=0;
+PlayParms.dwTo=0;
+PlayParms.dwFrom=0;
+mciSendCommand(NULL,MCI_OPEN,MCI_OPEN_TYPE|MCI_OPEN_ELEMENT,(DWORD)(LPVOID)&mciOpenParms);//打开音频设备；
+mciSendCommand(mciOpenParms.wDeviceID,MCI_PLAY,MCI_WAIT,(DWORD)(LPVOID)&PlayParms);//播放WAVE声音文件；
+mciSendCommand(mciOpenParms.wDeviceID,MCI_CLOSE,NULL,NULL);//关闭音频设备；
+}
+五、DirectSound操作WAVE文件的方法
+
+　　MCI虽然调用简单，功能强大，可以满足声音文件处理的基本需要，但是MCI也有它的缺点，那就是它一次只能播放一个WAVE文件，有时在实际应用中，为了实现混音效果，需要同时播放两个或两个以上的WAVE文件时，就需要使用微软DirectX技术中的DirectSound了，该技术直接操作底层声卡设备，可以实现八个以上WAV文件的同时播放。
+
+　　实现DirectSound需要以下几个步骤:1.创建及初始化DirectSound；2.设定应用程序的声音设备优先级别方式,一般为DSSCL_NORMAL；2. 将WAV文件读入内存,找到格式块、数据块位置及数据长度；3.创建声音缓冲区；4.载入声音数据；5.播放及停止:
+
+　　下面的函数利用DirectSound技术实现了一个WAVE声音文件的播放（注意项目设置中要包含"dsound.lib、dxguid.lib"的内容），代码和注释如下：
+
+void CPlaysoundView::OnPlaySound() 
+{
+　// TODO: Add your command handler code here
+　LPVOID lpPtr1;//指针1;
+　LPVOID lpPtr2;//指针2;
+　HRESULT hResult;
+　DWORD dwLen1,dwLen2;
+　LPVOID m_pMemory;//内存指针；
+　LPWAVEFORMATEX m_pFormat;//LPWAVEFORMATEX变量；
+　LPVOID m_pData;//指向语音数据块的指针；
+　DWORD m_dwSize;//WAVE文件中语音数据块的长度；
+　CFile File;//Cfile对象；
+　DWORD dwSize;//存放WAV文件长度；
+　//打开sound.wav文件；
+　if (!File.Open ("d://sound.wav", CFile::modeRead |CFile::shareDenyNone))
+　　return ;
+　dwSize = File.Seek (0, CFile::end);//获取WAVE文件长度；
+　File.Seek (0, CFile::begin);//定位到打开的WAVE文件头；
+　//为m_pMemory分配内存，类型为LPVOID，用来存放WAVE文件中的数据；
+　m_pMemory = GlobalAlloc (GMEM_FIXED, dwSize);
+　if (File.ReadHuge (m_pMemory, dwSize) != dwSize)//读取文件中的数据；
+　{
+　　File.Close ();
+　　return ;
+　}
+　File.Close ();
+　LPDWORD pdw,pdwEnd;
+　DWORD dwRiff,dwType, dwLength;
+　if (m_pFormat) //格式块指针
+　　m_pFormat = NULL;
+　if (m_pData) //数据块指针,类型:LPBYTE
+　　m_pData = NULL;
+　if (m_dwSize) //数据长度,类型:DWORD
+　　m_dwSize = 0;
+　pdw = (DWORD *) m_pMemory;
+　dwRiff = *pdw++;
+　dwLength = *pdw++;
+　dwType = *pdw++;
+　if (dwRiff != mmioFOURCC ('R', 'I', 'F', 'F'))
+　　return ;//判断文件头是否为"RIFF"字符；
+　if (dwType != mmioFOURCC ('W', 'A', 'V', 'E'))
+　　return ;//判断文件格式是否为"WAVE"；
+　//寻找格式块,数据块位置及数据长度
+　pdwEnd = (DWORD *)((BYTE *) m_pMemory+dwLength -4);
+　bool m_bend=false;
+　while ((pdw < pdwEnd)&&(!m_bend))
+　//pdw文件没有指到文件末尾并且没有获取到声音数据时继续;
+　{
+　　dwType = *pdw++;
+　　dwLength = *pdw++;
+　　switch (dwType)
+　　{
+　　　case mmioFOURCC('f', 'm', 't', ' ')://如果为"fmt"标志；
+　　　　if (!m_pFormat)//获取LPWAVEFORMATEX结构数据；
+　　　　{
+　　　　　if (dwLength < sizeof (WAVEFORMAT))
+　　　　　　return ;
+　　　　　m_pFormat = (LPWAVEFORMATEX) pdw;
+　
+　　　　}
+　　　　break;
+　　　case mmioFOURCC('d', 'a', 't', 'a')://如果为"data"标志；
+　　　　if (!m_pData || !m_dwSize)
+　　　　{
+　　　　　m_pData = (LPBYTE) pdw;//得到指向声音数据块的指针；
+　　　　　m_dwSize = dwLength;//获取声音数据块的长度；
+　　　　　if (m_pFormat)
+　　　　　　m_bend=TRUE;
+　　　　}
+　　　　break;
+　　}
+　　pdw = (DWORD *)((BYTE *) pdw + ((dwLength + 1)&~1));//修改pdw指针，继续循环；
+
+　}
+　DSBUFFERDESC BufferDesc;//定义DSUBUFFERDESC结构对象；
+　memset (&BufferDesc, 0, sizeof (BufferDesc));
+　BufferDesc.lpwfxFormat = (LPWAVEFORMATEX)m_pFormat;
+　BufferDesc.dwSize = sizeof (DSBUFFERDESC);
+　BufferDesc.dwBufferBytes = m_dwSize;
+　BufferDesc.dwFlags = 0;
+　HRESULT hRes;
+　LPDIRECTSOUND m_lpDirectSound;
+　hRes = ::DirectSoundCreate(0, &m_lpDirectSound, 0);//创建DirectSound对象；
+　if( hRes != DS_OK )
+　　return;
+　m_lpDirectSound->SetCooperativeLevel(this->GetSafeHwnd(), DSSCL_NORMAL);
+　//设置声音设备优先级别为"NORMAL"；
+　//创建声音数据缓冲；
+　LPDIRECTSOUNDBUFFER m_pDSoundBuffer;
+　if (m_lpDirectSound->CreateSoundBuffer (&BufferDesc, &m_pDSoundBuffer, 0) == DS_OK)
+　　//载入声音数据，这里使用两个指针lpPtr1,lpPtr2来指向DirectSoundBuffer缓冲区的数据，这是为了处理大型WAVE文件而设计的。dwLen1,dwLen2分别对应这两个指针所指向的缓冲区的长度。
+
+　　hResult=m_pDSoundBuffer->Lock(0,m_dwSize,&lpPtr1,&dwLen1,&lpPtr2,&dwLen2,0);
+　if (hResult == DS_OK)
+　{
+　　memcpy (lpPtr1, m_pData, dwLen1);
+　　if(dwLen2>0) 
+　　{
+　　　BYTE *m_pData1=(BYTE*)m_pData+dwLen1;
+　　　m_pData=(void *)m_pData1;
+　　　memcpy(lpPtr2,m_pData, dwLen2);
+　　}
+　　m_pDSoundBuffer->Unlock (lpPtr1, dwLen1, lpPtr2, dwLen2);
+
+　}
+　DWORD dwFlags = 0;
+　m_pDSoundBuffer->Play (0, 0, dwFlags); //播放WAVE声音数据；
+}
+　　为了更好的说明DiretSound编程的实现，笔者使用了一个函数来实现所有的操作，当然读者可以将上面的内容包装到一个类中，从而更好的实现程序的封装性，至于如何实现就不需要笔者多说了，真不明白的话，找本C++的书看看。如果定义了类，那么就可以一次声明多个对象来实现多个WAVE声音文件的混合播放。也许细心的读者会发现，在介绍WAVE文件格式的时候我们介绍了PCMWAVEFORMAT结构，但是在代码的实现读取WAVE文件数据部分，我们使用的却是LPWAVEFORMATEX结构，那末是不是我们有错误呢？其实没有错，对于PCM格式的WAVE文件来说，这两个结构是完全一样的，使用LPWAVEFORMATEX结构不过是为了方便设置DSBUFFERDESC对象罢了。
