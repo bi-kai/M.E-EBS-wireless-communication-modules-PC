@@ -6,22 +6,8 @@
 --------------------Configuration: record - Win32 Debug--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating command line "rc.exe /l 0x804 /fo"Debug/record.res" /d "_DEBUG" /d "_AFXDLL" "D:\vc\workspace\Â¼Òô\record11ÐÂ\record11ÐÂ\record.rc"" 
-Creating temporary file "C:\Users\idol\AppData\Local\Temp\RSP3BC9.tmp" with contents
-[
-/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_AFXDLL" /FR"Debug/" /Fp"Debug/record.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
-"D:\vc\workspace\Â¼Òô\record11ÐÂ\record11ÐÂ\CWaveFile.cpp"
-"D:\vc\workspace\Â¼Òô\record11ÐÂ\record11ÐÂ\record.cpp"
-"D:\vc\workspace\Â¼Òô\record11ÐÂ\record11ÐÂ\recordDlg.cpp"
-]
-Creating command line "cl.exe @C:\Users\idol\AppData\Local\Temp\RSP3BC9.tmp" 
-Creating temporary file "C:\Users\idol\AppData\Local\Temp\RSP3BCA.tmp" with contents
-[
-/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_AFXDLL" /FR"Debug/" /Fp"Debug/record.pch" /Yc"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
-"D:\vc\workspace\Â¼Òô\record11ÐÂ\record11ÐÂ\StdAfx.cpp"
-]
-Creating command line "cl.exe @C:\Users\idol\AppData\Local\Temp\RSP3BCA.tmp" 
-Creating temporary file "C:\Users\idol\AppData\Local\Temp\RSP3BCB.tmp" with contents
+Creating command line "rc.exe /l 0x804 /fo"Debug/record.res" /d "_DEBUG" /d "_AFXDLL" "D:\vc\workspace\Â¼Òô\2013.11.30record\record\record.rc"" 
+Creating temporary file "C:\Users\idol\AppData\Local\Temp\RSPA18D.tmp" with contents
 [
 SkinPPWTL.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/record.pdb" /debug /machine:I386 /out:"Debug/record.exe" /pdbtype:sept 
 ".\Debug\CWaveFile.obj"
@@ -30,20 +16,10 @@ SkinPPWTL.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/record.pdb
 ".\Debug\StdAfx.obj"
 ".\Debug\record.res"
 ]
-Creating command line "link.exe @C:\Users\idol\AppData\Local\Temp\RSP3BCB.tmp"
+Creating command line "link.exe @C:\Users\idol\AppData\Local\Temp\RSPA18D.tmp"
 <h3>Output Window</h3>
 Compiling resources...
-Compiling...
-StdAfx.cpp
-Compiling...
-CWaveFile.cpp
-record.cpp
-recordDlg.cpp
-Generating Code...
 Linking...
-Creating command line "bscmake.exe /nologo /o"Debug/record.bsc"  ".\Debug\StdAfx.sbr" ".\Debug\CWaveFile.sbr" ".\Debug\record.sbr" ".\Debug\recordDlg.sbr""
-Creating browse info file...
-<h3>Output Window</h3>
 
 
 
